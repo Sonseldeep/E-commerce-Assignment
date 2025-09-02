@@ -1,5 +1,7 @@
 using Ecommerce.Api.Data;
 using Ecommerce.Api.Models;
+using Ecommerce.Api.Repositories;
+using Ecommerce.Api.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -14,6 +16,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 
 builder.Services.AddIdentity<ApplicationUser,IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
+
+
+builder.Services.AddScoped<IMenueItemsRepository, MenuItemRepository>();
+builder.Services.AddScoped<IMenuItemsService, MenuItemsService>();
 
 
 builder.Services.AddControllers();

@@ -1,35 +1,35 @@
-using Ecommerce.Api.Data;
-using Ecommerce.Api.Models;
+using Ecommerce.Api.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Api.Controllers;
 
 [ApiController]
 public class MenuItemController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
-    
-    public MenuItemController(ApplicationDbContext context)
+    private readonly IMenueItemsRepository _services;
+
+    public MenuItemController(IMenueItemsRepository services)
     {
-        _context = context;
+        _services = services;
     }
 
-    [HttpGet("api/menuitems")]
+
+    [HttpGet(Endpoints.ApiEndpoints.MenuItems.GetAll)]
     public async Task<IActionResult> GetMenuItems()
     {
-        var menuItems = await _context.MenuItems.ToListAsync();
+        var menuItems = await _services.GetAllAsync();
         return Ok(menuItems);
     }
     
-    [HttpGet("api/menuitems/{id:int}")]
+    [HttpGet(Endpoints.ApiEndpoints.MenuItems.Get)]
     public async Task<IActionResult> GetMenuItemById([FromRoute] int id)
     {
         if (id <= 0)
         {
-            return BadRequest();
+            return BadRequest("Invalid Id");
         }
-        var menuItems = await _context.MenuItems.SingleOrDefaultAsync(m => m.Id == id);
+
+        var menuItems = await _services.GetByIdAsync(id);
         
         return menuItems is null ? NotFound() : Ok(menuItems);
     }
