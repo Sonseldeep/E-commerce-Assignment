@@ -1,5 +1,4 @@
 using System.Net;
-using System.Net.Mime;
 using Ecommerce.Api.Data;
 using Ecommerce.Api.Dtos;
 using Ecommerce.Api.Models;
@@ -24,13 +23,20 @@ public class MenuItemController : ControllerBase
         _response = new ApiResponse();
     }
 
+    private BadRequestObjectResult SetBadRequestResponse(string message = "Invalid request.")
+    {
+        _response.StatusCode = HttpStatusCode.BadRequest;
+        _response.IsSuccess = false;
+        _response.ErrorMessages = [message];
+        return BadRequest(_response);
+    }
+
     [HttpGet(Endpoints.ApiEndpoints.MenuItems.GetAll)]
     public async Task<IActionResult> GetMenuItems()
     {
-        _response.Result = await  _context.MenuItems.AsNoTracking().ToListAsync();
+        _response.Result = await _context.MenuItems.AsNoTracking().ToListAsync();
         _response.StatusCode = HttpStatusCode.OK;
         return Ok(_response);
-
     }
 
     [HttpGet(Endpoints.ApiEndpoints.MenuItems.Get)]
@@ -38,26 +44,22 @@ public class MenuItemController : ControllerBase
     {
         if (id <= 0)
         {
-            _response.StatusCode = HttpStatusCode.BadRequest;
-            _response.IsSuccess = false;
-            return BadRequest(_response);
+            return SetBadRequestResponse("Menu item ID must be greater than zero.");
         }
 
-        var menuItem = await _context.MenuItems.
-            SingleOrDefaultAsync(x => x.Id == id);
-       
+        var menuItem = await _context.MenuItems.SingleOrDefaultAsync(x => x.Id == id);
+
         if (menuItem is null)
         {
             _response.StatusCode = HttpStatusCode.NotFound;
             _response.IsSuccess = false;
+            _response.ErrorMessages = ["Menu item not found."];
             return NotFound(_response);
         }
-        
+
         _response.Result = menuItem;
         _response.StatusCode = HttpStatusCode.OK;
         return Ok(_response);
-        
-
     }
 
     [HttpPost(Endpoints.ApiEndpoints.MenuItems.Create)]
@@ -67,15 +69,12 @@ public class MenuItemController : ControllerBase
         {
             if (ModelState.IsValid)
             {
-                if (menuItemCreateDto.File == null || menuItemCreateDto.File.Length == 0)
+                if (menuItemCreateDto.File.Length == 0)
                 {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    _response.IsSuccess = false;
-                    return BadRequest(_response);
+                    return SetBadRequestResponse("Image file is required.");
                 }
 
                 var fileName = $"{Guid.NewGuid()}{Path.GetExtension(menuItemCreateDto.File.FileName)}";
-                // mapping dto to entity
                 MenuItem menuItemToCreate = new()
                 {
                     Name = menuItemCreateDto.Name,
@@ -83,20 +82,17 @@ public class MenuItemController : ControllerBase
                     Category = menuItemCreateDto.Category,
                     SpecialTag = menuItemCreateDto.SpecialTag,
                     Description = menuItemCreateDto.Description,
-                    Image = await _blobService.UploadBlob(fileName, Sd .SdStorageContainer, menuItemCreateDto.File)
-
+                    Image = await _blobService.UploadBlob(fileName, Sd.SdStorageContainer, menuItemCreateDto.File)
                 };
-                 await _context.MenuItems.AddAsync(menuItemToCreate);
-                 await _context.SaveChangesAsync();
-                 _response.Result = menuItemToCreate;
-                 _response.StatusCode = HttpStatusCode.Created;
-                 return CreatedAtAction(nameof(GetMenuItem), new {id=menuItemToCreate.Id}, _response);
-                 
-
+                
+                await _context.MenuItems.AddAsync(menuItemToCreate);
+                await _context.SaveChangesAsync();
+                
+                _response.Result = menuItemToCreate;
+                _response.StatusCode = HttpStatusCode.Created;
+                return CreatedAtAction(nameof(GetMenuItem), new { id = menuItemToCreate.Id }, _response);
             }
-
-            _response.IsSuccess = false;
-
+            return SetBadRequestResponse();
         }
         catch (Exception e)
         {
@@ -105,11 +101,9 @@ public class MenuItemController : ControllerBase
         }
         return _response;
     }
-    
-    
-    
+
     [HttpPut(Endpoints.ApiEndpoints.MenuItems.Update)]
-    public async Task<ActionResult<ApiResponse>> UpdateMenuItem([FromRoute] int id,  MenuItemUpdateDto menuItemUpdateDto)
+    public async Task<ActionResult<ApiResponse>> UpdateMenuItem([FromRoute] int id, MenuItemUpdateDto menuItemUpdateDto)
     {
         try
         {
@@ -117,13 +111,13 @@ public class MenuItemController : ControllerBase
             {
                 if (id != menuItemUpdateDto.Id)
                 {
-                    return BadRequest();
+                    return SetBadRequestResponse("Route ID and DTO ID do not match.");
                 }
 
                 var menuItemFromDb = await _context.MenuItems.FindAsync(id);
                 if (menuItemFromDb is null)
                 {
-                    return BadRequest();
+                    return SetBadRequestResponse("Menu item not found.");
                 }
 
                 menuItemFromDb.Name = menuItemUpdateDto.Name;
@@ -132,30 +126,19 @@ public class MenuItemController : ControllerBase
                 menuItemFromDb.SpecialTag = menuItemUpdateDto.SpecialTag;
                 menuItemFromDb.Description = menuItemUpdateDto.Description;
 
-                
-                // In UpdateMenuItem
-                if (menuItemUpdateDto.File != null && menuItemUpdateDto.File.Length > 0)
+                if (menuItemUpdateDto.File.Length > 0)
                 {
                     var fileName = $"{Guid.NewGuid()}{Path.GetExtension(menuItemUpdateDto.File.FileName)}";
                     await _blobService.DeleteBlob(menuItemFromDb.Image.Split('/').Last(), Sd.SdStorageContainer);
                     menuItemFromDb.Image = await _blobService.UploadBlob(fileName, Sd.SdStorageContainer, menuItemUpdateDto.File);
                 }
-                
-                
-              
-            
-               
+
                 _context.MenuItems.Update(menuItemFromDb);
                 await _context.SaveChangesAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(_response);
-
-
-
             }
-
-            _response.IsSuccess = false;
-
+            return SetBadRequestResponse();
         }
         catch (Exception e)
         {
@@ -174,25 +157,23 @@ public class MenuItemController : ControllerBase
             {
                 if (id == 0)
                 {
-                    _response.IsSuccess = false;
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
+                    return SetBadRequestResponse("Menu item ID must be greater than zero.");
                 }
+
                 var menuItemFromDb = await _context.MenuItems.FindAsync(id);
                 if (menuItemFromDb is null)
                 {
-                    return BadRequest();
+                    return SetBadRequestResponse("Menu item not found.");
                 }
+
                 await _blobService.DeleteBlob(menuItemFromDb.Image.Split('/').Last(), Sd.SdStorageContainer);
-                
+
                 _context.MenuItems.Remove(menuItemFromDb);
                 await _context.SaveChangesAsync();
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(_response);
-                
-                
             }
-
+            return SetBadRequestResponse();
         }
         catch (Exception e)
         {
@@ -202,3 +183,6 @@ public class MenuItemController : ControllerBase
         return _response;
     }
 }
+
+
+
