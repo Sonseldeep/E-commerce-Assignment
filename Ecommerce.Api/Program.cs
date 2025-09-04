@@ -1,6 +1,6 @@
+using Azure.Storage.Blobs;
 using Ecommerce.Api.Data;
 using Ecommerce.Api.Models;
-using Ecommerce.Api.Repositories;
 using Ecommerce.Api.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -15,11 +15,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+// onlly be one object when application starts
+builder.Services.AddSingleton( x => 
+    new BlobServiceClient(builder.Configuration
+        .GetConnectionString("StorageAccount")
+    ));
+
+builder.Services.AddSingleton<IBlobService, BlobService>();
 builder.Services.AddIdentity<ApplicationUser,IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
 
-
-builder.Services.AddScoped<IMenueItemsRepository, MenuItemRepository>();
-builder.Services.AddScoped<IMenuItemsService, MenuItemsService>();
 
 
 builder.Services.AddControllers();

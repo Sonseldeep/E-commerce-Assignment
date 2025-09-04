@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Ecommerce.Api.Models;
+namespace Ecommerce.Api.Dtos;
 
-public class MenuItem
+public class MenuItemUpdateDto
 {
     [Key]
     public int Id { get; set; }
@@ -13,5 +13,5 @@ public class MenuItem
     
     [Range(1,int.MaxValue)]
     public required double Price { get; set; }
-    public required string Image { get; set; }
+    public required IFormFile File { get; set; }
 }

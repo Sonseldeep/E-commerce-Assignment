@@ -1,17 +1,16 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Ecommerce.Api.Models;
+namespace Ecommerce.Api.Dtos;
 
-public class MenuItem
+public class MenuItemCreateDto
 {
-    [Key]
-    public int Id { get; set; }
-    public required string Name { get; set; } = string.Empty;
+
+    public string Name { get; set; } = string.Empty;
     public string? Description { get; set; }
     public string? SpecialTag { get; set; }
     public required string Category { get; set; }
     
     [Range(1,int.MaxValue)]
     public required double Price { get; set; }
-    public required string Image { get; set; }
+    public required IFormFile File { get; set; }
 }
