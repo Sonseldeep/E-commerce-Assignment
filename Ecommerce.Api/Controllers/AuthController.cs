@@ -1,4 +1,5 @@
 using Ecommerce.Api.Data;
+using Ecommerce.Api.Dtos.Register;
 using Ecommerce.Api.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -24,4 +25,10 @@ public class AuthController : ControllerBase
         _secretKey = configuration.GetValue<string>("ApiSettings:Secret")!;
         _response = new ApiResponse();
     }
+
+    // [HttpPost(Endpoints.ApiEndpoints.Auth.Create)]
+    // public async Task<IActionResult> Register([FromBody] RegisterRequestDto model)
+    // {
+    //     
+    // }
 }
