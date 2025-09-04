@@ -24,7 +24,7 @@ public class MenuItemController : ControllerBase
         _response = new ApiResponse();
     }
 
-    [HttpGet("api/menuitems")]
+    [HttpGet(Endpoints.ApiEndpoints.MenuItems.GetAll)]
     public async Task<IActionResult> GetMenuItems()
     {
         _response.Result = await  _context.MenuItems.AsNoTracking().ToListAsync();
@@ -33,7 +33,7 @@ public class MenuItemController : ControllerBase
 
     }
 
-    [HttpGet("api/menuitems/{id:int}")]
+    [HttpGet(Endpoints.ApiEndpoints.MenuItems.Get)]
     public async Task<IActionResult> GetMenuItem([FromRoute] int id)
     {
         if (id <= 0)
@@ -60,7 +60,7 @@ public class MenuItemController : ControllerBase
 
     }
 
-    [HttpPost("api/menuitems")]
+    [HttpPost(Endpoints.ApiEndpoints.MenuItems.Create)]
     public async Task<ActionResult<ApiResponse>> CreateMenuItem([FromForm] MenuItemCreateDto menuItemCreateDto)
     {
         try
@@ -108,7 +108,7 @@ public class MenuItemController : ControllerBase
     
     
     
-    [HttpPut("api/menuitems/{id:int}")]
+    [HttpPut(Endpoints.ApiEndpoints.MenuItems.Update)]
     public async Task<ActionResult<ApiResponse>> UpdateMenuItem([FromRoute] int id,  MenuItemUpdateDto menuItemUpdateDto)
     {
         try
