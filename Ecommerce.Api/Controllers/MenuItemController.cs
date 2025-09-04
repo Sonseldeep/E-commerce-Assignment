@@ -164,4 +164,41 @@ public class MenuItemController : ControllerBase
         }
         return _response;
     }
+
+    [HttpDelete(Endpoints.ApiEndpoints.MenuItems.Delete)]
+    public async Task<ActionResult<ApiResponse>> DeleteMenuItem([FromRoute] int id)
+    {
+        try
+        {
+            if (ModelState.IsValid)
+            {
+                if (id == 0)
+                {
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest(_response);
+                }
+                var menuItemFromDb = await _context.MenuItems.FindAsync(id);
+                if (menuItemFromDb is null)
+                {
+                    return BadRequest();
+                }
+                await _blobService.DeleteBlob(menuItemFromDb.Image.Split('/').Last(), Sd.SdStorageContainer);
+                
+                _context.MenuItems.Remove(menuItemFromDb);
+                await _context.SaveChangesAsync();
+                _response.StatusCode = HttpStatusCode.NoContent;
+                return Ok(_response);
+                
+                
+            }
+
+        }
+        catch (Exception e)
+        {
+            _response.IsSuccess = false;
+            _response.ErrorMessages = [e.ToString()];
+        }
+        return _response;
+    }
 }
