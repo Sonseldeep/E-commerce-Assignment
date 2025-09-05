@@ -1,5 +1,6 @@
 using System.Net;
 using Ecommerce.Api.Data;
+using Ecommerce.Api.Dtos.Login;
 using Ecommerce.Api.Dtos.Register;
 using Ecommerce.Api.Models;
 using Ecommerce.Api.Utility;
@@ -29,7 +30,44 @@ public class AuthController : ControllerBase
         _response = new ApiResponse();
     }
 
-  [HttpPost(Endpoints.ApiEndpoints.Auth.Create)]
+    [HttpPost(Endpoints.ApiEndpoints.Auth.Login)]
+    public async Task<IActionResult> Login([FromBody] LoginRequestDto model)
+    {
+        // check if user exists
+        var userFromDb = await _context.ApplicationUsers.SingleOrDefaultAsync(x => x.UserName !=null && x.UserName.ToLower() == model.UserName.ToLower());
+        
+        //is exists, check if password is correct
+        var isValid = await _userManager.CheckPasswordAsync(userFromDb, model.Password);
+        if (!isValid)
+        {
+            _response.StatusCode = HttpStatusCode.BadRequest;
+            _response.IsSuccess = false;
+            _response.ErrorMessages.Add("Username or password is incorrect.");
+            return BadRequest(_response);
+        }
+        // we have to generate JWT token
+        LoginResponseDto loginResponse = new()
+        {
+            Email = model.UserName,
+            Token = "REPLACE WITH ACTUAL TOKEN ONCE WE GENERATE"
+        };
+        
+        if (string.IsNullOrEmpty(loginResponse.Token))
+        {
+            _response.StatusCode = HttpStatusCode.BadRequest;
+            _response.IsSuccess = false;
+            _response.ErrorMessages.Add("Username or password is incorrect.");
+            return BadRequest(_response);
+        }
+        
+        _response.StatusCode = HttpStatusCode.OK;
+        _response.IsSuccess = true;
+        _response.Result = loginResponse;
+        return Ok(_response);
+
+    } 
+
+  [HttpPost(Endpoints.ApiEndpoints.Auth.Register)]
 public async Task<IActionResult> Register([FromBody] RegisterRequestDto model)
 {
     var userFromDb = await _context.ApplicationUsers
