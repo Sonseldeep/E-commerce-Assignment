@@ -1,4 +1,7 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
+using System.Security.Claims;
+using System.Text;
 using Ecommerce.Api.Data;
 using Ecommerce.Api.Dtos.Login;
 using Ecommerce.Api.Dtos.Register;
@@ -7,6 +10,7 @@ using Ecommerce.Api.Utility;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Ecommerce.Api.Controllers;
 
@@ -46,10 +50,30 @@ public class AuthController : ControllerBase
             return BadRequest(_response);
         }
         // we have to generate JWT token
+        var roles = await _userManager.GetRolesAsync(userFromDb);
+        JwtSecurityTokenHandler tokenHandler = new();
+        var key = Encoding.ASCII.GetBytes(_secretKey);
+        SecurityTokenDescriptor tokenDescriptor = new()
+        {
+            Subject = new ClaimsIdentity([
+                new Claim("fullname", userFromDb.Name),
+                new Claim("id", userFromDb.Id.ToString()),
+                new Claim(ClaimTypes.Email, userFromDb.UserName?.ToString()!),
+                new Claim(ClaimTypes.Role, roles.FirstOrDefault()!)
+
+            ]),
+            Expires = DateTime.UtcNow.AddDays(1),
+            SigningCredentials =
+                new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        };
+        
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        
+        
         LoginResponseDto loginResponse = new()
         {
             Email = model.UserName,
-            Token = "REPLACE WITH ACTUAL TOKEN ONCE WE GENERATE"
+            Token = tokenHandler.WriteToken(token),
         };
         
         if (string.IsNullOrEmpty(loginResponse.Token))
