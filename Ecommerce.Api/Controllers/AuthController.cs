@@ -1,8 +1,11 @@
+using System.Net;
 using Ecommerce.Api.Data;
 using Ecommerce.Api.Dtos.Register;
 using Ecommerce.Api.Models;
+using Ecommerce.Api.Utility;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Api.Controllers;
 
@@ -26,9 +29,67 @@ public class AuthController : ControllerBase
         _response = new ApiResponse();
     }
 
-    // [HttpPost(Endpoints.ApiEndpoints.Auth.Create)]
-    // public async Task<IActionResult> Register([FromBody] RegisterRequestDto model)
-    // {
-    //     
-    // }
+  [HttpPost(Endpoints.ApiEndpoints.Auth.Create)]
+public async Task<IActionResult> Register([FromBody] RegisterRequestDto model)
+{
+    var userFromDb = await _context.ApplicationUsers
+        .SingleOrDefaultAsync(x => 
+            x.UserName != null && x.UserName.ToLower() == model.UserName.ToLower());
+    
+    if (userFromDb is not null)
+    {
+        _response.StatusCode = HttpStatusCode.BadRequest;
+        _response.IsSuccess = false;
+        _response.ErrorMessages.Add("Username already exists.");
+        return BadRequest(_response);
+    }
+
+    ApplicationUser newUser = new()
+    {
+        UserName = model.UserName,
+        Email = model.UserName, 
+        NormalizedUserName = model.UserName.ToUpper(),
+        Name = model.Name,
+    };
+
+    try
+    {
+        var result = await _userManager.CreateAsync(newUser, model.Password);
+        if (result.Succeeded)
+        {
+            if (!await _roleManager.RoleExistsAsync(Sd.RoleAdmin))
+            {
+                // create roles in db
+                await _roleManager.CreateAsync(new IdentityRole(Sd.RoleAdmin));
+                await _roleManager.CreateAsync(new IdentityRole(Sd.RoleCustomer));
+            }
+
+            if (model.Role.Equals(Sd.RoleCustomer, StringComparison.OrdinalIgnoreCase))
+            {
+                await _userManager.AddToRoleAsync(newUser, Sd.RoleCustomer);
+            }
+            else
+            {
+                await _userManager.AddToRoleAsync(newUser, Sd.RoleAdmin);
+            }
+        
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            return Ok(_response);
+        }
+
+        _response.StatusCode = HttpStatusCode.BadRequest;
+        _response.IsSuccess = false;
+        _response.ErrorMessages.Add("Error while registering.");
+        return BadRequest(_response);
+    }
+    catch (Exception)
+    {
+        _response.StatusCode = HttpStatusCode.BadRequest;
+        _response.IsSuccess = false;
+        _response.ErrorMessages.Add("Error while registering.");
+        return BadRequest(_response);
+    }
+}
+
 }
