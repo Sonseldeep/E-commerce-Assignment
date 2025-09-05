@@ -1,9 +1,12 @@
+using System.Text;
 using Azure.Storage.Blobs;
 using Ecommerce.Api.Data;
 using Ecommerce.Api.Models;
 using Ecommerce.Api.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,11 +33,28 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireUppercase = false;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequiredLength = 1;
-    
-} );
+
+});
+var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
+builder.Services.AddAuthentication(x =>
+{
+    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(x =>
+{
+   x.RequireHttpsMetadata = false;
+   x.SaveToken = true;
+   x.TokenValidationParameters = new TokenValidationParameters
+   {
+       ValidateIssuerSigningKey = true,
+       IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key!)),
+       ValidateIssuer = false,
+       ValidateAudience = false
+   };
+});
 
 
-
+builder.Services.AddCors();
 builder.Services.AddControllers();
 
 builder.Services.AddOpenApi();
@@ -51,7 +71,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors(o => o.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
