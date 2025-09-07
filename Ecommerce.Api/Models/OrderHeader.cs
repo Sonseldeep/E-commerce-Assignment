@@ -16,8 +16,7 @@ public class OrderHeader
    
     public string ApplicationUserId { get; set; }
     [ForeignKey("ApplicationUserId")]
-    public ApplicationUser User { get; set; }
-    
+    public ApplicationUser User { get; set; } 
     public double OrderTotal { get; set; }
 
     public DateTime OrderDate { get; set; }
