@@ -151,4 +151,66 @@ public async Task<ActionResult<ApiResponse>> CreateOrder([FromBody] OrderHeaderC
     }
 }
 
+[HttpPut("api/orders/{id:int}")]
+public async Task<ActionResult<ApiResponse>> UpdateOrderHeader(int id,
+    [FromBody] OrderHeaderUpdateDto? orderHeaderUpdateDto)
+{
+    try
+    {
+        if (orderHeaderUpdateDto is null || id != orderHeaderUpdateDto.OrderHeaderId) 
+        {
+            _response.IsSuccess = false;
+            _response.StatusCode = HttpStatusCode.BadRequest;
+            return BadRequest();
+        }
+        
+        var orderFromDb = await _context.OrderHeaders.FirstOrDefaultAsync(x => x.OrderHeaderId == id);
+        
+        if(orderFromDb is null)
+        {
+            _response.IsSuccess = false;
+            _response.StatusCode = HttpStatusCode.BadRequest;
+            return NotFound();
+        }
+
+        if (!string.IsNullOrEmpty(orderHeaderUpdateDto.PickupName))
+        {
+            orderFromDb.PickupName = orderHeaderUpdateDto.PickupName;
+        }
+        
+        if (!string.IsNullOrEmpty(orderHeaderUpdateDto.PickupPhoneNumber))
+        {
+            orderFromDb.PickupPhoneNumber = orderHeaderUpdateDto.PickupPhoneNumber;
+        }
+        
+        if (!string.IsNullOrEmpty(orderHeaderUpdateDto.PickupEmail))
+        {
+            orderFromDb.PickupEmail = orderHeaderUpdateDto.PickupEmail;
+        }
+        
+        if (!string.IsNullOrEmpty(orderHeaderUpdateDto.Status))
+        {
+            orderFromDb.Status = orderHeaderUpdateDto.Status;
+        }
+        
+        if (!string.IsNullOrEmpty(orderHeaderUpdateDto.StripePaymentIntentID))
+        {
+            orderFromDb.StripePaymentIntentID = orderHeaderUpdateDto.StripePaymentIntentID;
+        }
+
+        await _context.SaveChangesAsync();
+        _response.StatusCode = HttpStatusCode.NoContent;
+        _response.IsSuccess = true;
+        return Ok(_response);
+
+
+    }
+    catch (Exception ex)
+    {
+        _response.IsSuccess = false;
+        _response.ErrorMessages = [ex.ToString()];
+    }
+    return _response;
+}
+
 }
