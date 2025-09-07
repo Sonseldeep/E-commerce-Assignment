@@ -32,6 +32,11 @@ public class ShoppingCartController : ControllerBase
 
             var shoppingCart = await  _context.ShoppingCarts.Include(x => x.CartItems).ThenInclude(x => x.MenuItem)
                 .FirstOrDefaultAsync(x => x.UserId == userId);
+
+            if (shoppingCart?.CartItems is not null && shoppingCart.CartItems.Count > 0)
+            {
+                shoppingCart.CartTotal = shoppingCart.CartItems.Sum(x => x.Quantity * x.MenuItem.Price);
+            }
             
             _response.Result = shoppingCart;
             _response.StatusCode = HttpStatusCode.OK;
