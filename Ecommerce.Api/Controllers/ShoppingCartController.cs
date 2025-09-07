@@ -10,7 +10,7 @@ namespace Ecommerce.Api.Controllers;
 public class ShoppingCartController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
-    protected ApiResponse _response;
+    private readonly ApiResponse _response;
 
     public ShoppingCartController(ApplicationDbContext context)
     {
@@ -38,7 +38,7 @@ public class ShoppingCartController : ControllerBase
                 shoppingCart.CartTotal = shoppingCart.CartItems.Sum(x => x.Quantity * x.MenuItem.Price);
             }
             
-            _response.Result = shoppingCart;
+            _response.Result = shoppingCart!;
             _response.StatusCode = HttpStatusCode.OK;
             return Ok(_response);
 
@@ -117,14 +117,13 @@ public class ShoppingCartController : ControllerBase
                     {
                         _context.ShoppingCarts.Remove(shoppingCart);
                     }
-
-                    await _context.SaveChangesAsync();
                 }
                 else
                 {
                     cartItemInCart.Quantity = newQuantity;
-                    await _context.SaveChangesAsync();
                 }
+
+                await _context.SaveChangesAsync();
             }
 
             _response.StatusCode = HttpStatusCode.OK;
