@@ -18,6 +18,35 @@ public class ShoppingCartController : ControllerBase
         _context = context;
     }
 
+    [HttpGet("api/shoppingcart")]
+    public async Task<ActionResult<ApiResponse>> GetShoppingCart(string userId)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                return BadRequest(_response);
+            }
+
+            var shoppingCart = await  _context.ShoppingCarts.Include(x => x.CartItems).ThenInclude(x => x.MenuItem)
+                .FirstOrDefaultAsync(x => x.UserId == userId);
+            
+            _response.Result = shoppingCart;
+            _response.StatusCode = HttpStatusCode.OK;
+            return Ok(_response);
+
+        }
+        catch (Exception ex)
+        {
+            _response.IsSuccess = false;
+            _response.ErrorMessages = [ex.ToString()];
+            _response.StatusCode = HttpStatusCode.BadRequest;
+        }
+        return _response;
+    }
+
     [HttpPost("api/shoppingcart")]
     public async Task<ActionResult<ApiResponse>> AddOrUpdateItemInCart(string userId, int menuItemId, int updateQuantityBy)
     {
