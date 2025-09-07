@@ -1,29 +1,19 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Ecommerce.Api.Models;
 
-namespace Ecommerce.Api.Models;
+namespace Ecommerce.Api.Dtos.Order;
 
-public class OrderHeader
+public class OrderHeaderUpdateDto
 {
-    [Key]
-    public int OrderHeaderId { get; set; }
-    [Required]
-    public string PickupName { get; set; }
-    [Required]
-    public string PickupPhoneNumber { get; set; }
-    [Required]
-    public string PickupEmail { get; set; }
-   
-    public string ApplicationUserId { get; set; }
-    [ForeignKey("ApplicationUserId")]
-    public ApplicationUser User { get; set; }
     
-    public double OrderTotal { get; set; }
-
+    public int OrderHeaderId { get; set; }
+    public string PickupName { get; set; }
+    public string PickupPhoneNumber { get; set; }
+    public string PickupEmail { get; set; }
     public DateTime OrderDate { get; set; }
     public string StripePaymentIntentID { get; set; }
     public string Status { get; set; }
-    public int TotalItems { get; set; }
+    
 
-    public IEnumerable<OrderDetails> OrderDetails { get; set; }
 }

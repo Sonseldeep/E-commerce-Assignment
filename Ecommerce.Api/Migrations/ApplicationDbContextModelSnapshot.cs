@@ -281,6 +281,8 @@ namespace Ecommerce.Api.Migrations
 
                     b.HasIndex("MenuItemId");
 
+                    b.HasIndex("OrderHeaderId");
+
                     b.ToTable("OrderDetails");
                 });
 
@@ -301,6 +303,10 @@ namespace Ecommerce.Api.Migrations
 
                     b.Property<double>("OrderTotal")
                         .HasColumnType("float");
+
+                    b.Property<string>("PickupEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PickupName")
                         .IsRequired()
@@ -503,6 +509,12 @@ namespace Ecommerce.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Ecommerce.Api.Models.OrderHeader", null)
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("OrderHeaderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("MenuItem");
                 });
 
@@ -566,6 +578,11 @@ namespace Ecommerce.Api.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Ecommerce.Api.Models.OrderHeader", b =>
+                {
+                    b.Navigation("OrderDetails");
                 });
 
             modelBuilder.Entity("Ecommerce.Api.Models.ShoppingCart", b =>
