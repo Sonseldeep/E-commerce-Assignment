@@ -1,0 +1,69 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\97798\\Downloads\\Software Engineering Project 6th sem\\Ecommerce\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A809FCD5-14A0-49AF-A3E8-38D494670792}|Ecommerce.Api\\Ecommerce.Api.csproj|c:\\users\\97798\\downloads\\software engineering project 6th sem\\ecommerce\\ecommerce.api\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A809FCD5-14A0-49AF-A3E8-38D494670792}|Ecommerce.Api\\Ecommerce.Api.csproj|solutionrelative:ecommerce.api\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A809FCD5-14A0-49AF-A3E8-38D494670792}|Ecommerce.Api\\Ecommerce.Api.csproj|c:\\users\\97798\\downloads\\software engineering project 6th sem\\ecommerce\\ecommerce.api\\models\\shoppingcart.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A809FCD5-14A0-49AF-A3E8-38D494670792}|Ecommerce.Api\\Ecommerce.Api.csproj|solutionrelative:ecommerce.api\\models\\shoppingcart.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A809FCD5-14A0-49AF-A3E8-38D494670792}|Ecommerce.Api\\Ecommerce.Api.csproj|c:\\users\\97798\\downloads\\software engineering project 6th sem\\ecommerce\\ecommerce.api\\models\\menuitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A809FCD5-14A0-49AF-A3E8-38D494670792}|Ecommerce.Api\\Ecommerce.Api.csproj|solutionrelative:ecommerce.api\\models\\menuitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ApplicationDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\97798\\Downloads\\Software Engineering Project 6th sem\\Ecommerce\\Ecommerce.Api\\Data\\ApplicationDbContext.cs",
+              "RelativeDocumentMoniker": "Ecommerce.Api\\Data\\ApplicationDbContext.cs",
+              "ToolTip": "C:\\Users\\97798\\Downloads\\Software Engineering Project 6th sem\\Ecommerce\\Ecommerce.Api\\Data\\ApplicationDbContext.cs",
+              "RelativeToolTip": "Ecommerce.Api\\Data\\ApplicationDbContext.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAuwA8AAAA6AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-06T12:12:07.986Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ShoppingCart.cs",
+              "DocumentMoniker": "C:\\Users\\97798\\Downloads\\Software Engineering Project 6th sem\\Ecommerce\\Ecommerce.Api\\Models\\ShoppingCart.cs",
+              "RelativeDocumentMoniker": "Ecommerce.Api\\Models\\ShoppingCart.cs",
+              "ToolTip": "C:\\Users\\97798\\Downloads\\Software Engineering Project 6th sem\\Ecommerce\\Ecommerce.Api\\Models\\ShoppingCart.cs",
+              "RelativeToolTip": "Ecommerce.Api\\Models\\ShoppingCart.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-06T12:12:04.731Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "MenuItem.cs",
+              "DocumentMoniker": "C:\\Users\\97798\\Downloads\\Software Engineering Project 6th sem\\Ecommerce\\Ecommerce.Api\\Models\\MenuItem.cs",
+              "RelativeDocumentMoniker": "Ecommerce.Api\\Models\\MenuItem.cs",
+              "ToolTip": "C:\\Users\\97798\\Downloads\\Software Engineering Project 6th sem\\Ecommerce\\Ecommerce.Api\\Models\\MenuItem.cs",
+              "RelativeToolTip": "Ecommerce.Api\\Models\\MenuItem.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-06T12:12:03.151Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
