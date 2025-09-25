@@ -193,5 +193,3 @@ This project is licensed under the MIT License.
 - [Stripe](https://stripe.com/docs/api)
 
 ---
-
-*This README was generated for a professional, modern, and informative developer experience.*
